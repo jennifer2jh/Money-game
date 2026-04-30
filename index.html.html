@@ -1,0 +1,1508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Money Quest — Learn Money Like a Pro!</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap');
+
+:root {
+  --sky: #e8f4fd;
+  --ink: #1e1b2e;
+  --ink2: #3d3a52;
+  --ink3: #7b7894;
+  --card: #ffffff;
+  --rule: #e5e3f0;
+
+  /* level colors */
+  --lv1: #f59e0b; /* amber - coins */
+  --lv2: #10b981; /* emerald - saving */
+  --lv3: #6366f1; /* indigo - spending */
+  --lv4: #ec4899; /* pink - investing */
+  --lv5: #8b5cf6; /* violet - allowance game */
+
+  --star: #fbbf24;
+  --xp-bar: #a78bfa;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--sky);
+  color: var(--ink);
+  min-height: 100vh;
+  font-size: 16px;
+}
+
+/* ── HEADER ── */
+.header {
+  background: linear-gradient(135deg, #1e1b2e 0%, #3b2d8a 100%);
+  padding: 20px 24px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 12px;
+}
+.logo {
+  font-family: 'Fredoka One', cursive;
+  font-size: 26px; color: #fbbf24;
+  text-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+  display: flex; align-items: center; gap: 8px;
+}
+.logo-sub { font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 700; color: #a5b4fc; letter-spacing: 0.1em; text-transform: uppercase; display: block; margin-top: -4px; }
+
+.xp-block { text-align: right; }
+.xp-label { font-size: 11px; font-weight: 700; color: #a5b4fc; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; }
+.xp-bar-wrap { background: rgba(255,255,255,0.15); border-radius: 20px; height: 12px; width: 160px; overflow: hidden; }
+.xp-bar-fill { height: 100%; background: linear-gradient(90deg, var(--xp-bar), #c4b5fd); border-radius: 20px; transition: width 0.5s ease; }
+.xp-text { font-size: 11px; color: #c4b5fd; margin-top: 3px; text-align: right; }
+
+/* ── LEVEL NAV ── */
+.level-nav {
+  display: flex; gap: 0; overflow-x: auto;
+  background: white; border-bottom: 2px solid var(--rule);
+  padding: 0 8px;
+}
+.lnav-item {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 12px 16px; cursor: pointer; position: relative;
+  white-space: nowrap; gap: 3px; min-width: 80px;
+  border-bottom: 3px solid transparent; transition: all 0.2s;
+  text-decoration: none;
+}
+.lnav-item:hover { background: var(--sky); }
+.lnav-item.active { border-bottom-color: var(--lv-color); }
+.lnav-item.locked { opacity: 0.4; cursor: not-allowed; }
+.lnav-icon { font-size: 22px; }
+.lnav-label { font-size: 10px; font-weight: 800; color: var(--ink3); letter-spacing: 0.05em; text-transform: uppercase; }
+.lnav-item.active .lnav-label { color: var(--lv-color); }
+.lnav-badge {
+  position: absolute; top: 6px; right: 8px;
+  background: #ef4444; color: white;
+  font-size: 9px; font-weight: 800;
+  padding: 1px 5px; border-radius: 10px;
+}
+.lnav-lock { position: absolute; top: 6px; right: 6px; font-size: 12px; }
+
+/* ── SCREENS ── */
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* ── LEVEL HERO ── */
+.level-hero {
+  padding: 32px 24px 24px;
+  text-align: center;
+  position: relative; overflow: hidden;
+}
+.level-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0) 60%, var(--sky) 100%);
+  pointer-events: none;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--lv-color); color: white;
+  padding: 5px 14px; border-radius: 20px;
+  font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.hero-emoji { font-size: 64px; margin-bottom: 10px; display: block; animation: bounce 2s infinite; }
+@keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+.hero-title { font-family: 'Fredoka One', cursive; font-size: 32px; color: var(--ink); line-height: 1.1; margin-bottom: 8px; }
+.hero-sub { font-size: 15px; color: var(--ink2); font-weight: 600; max-width: 380px; margin: 0 auto; }
+
+/* ── MAIN CONTENT ── */
+.main { max-width: 680px; margin: 0 auto; padding: 0 16px 60px; }
+
+/* ── LESSON CARD ── */
+.lesson-card {
+  background: white; border-radius: 16px; overflow: hidden;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  border: 2px solid transparent;
+}
+.lesson-card:hover { border-color: var(--lv-color); }
+
+.lesson-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 18px; cursor: pointer;
+  border-bottom: 2px solid var(--rule);
+}
+.lesson-num {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--lv-color); color: white;
+  font-family: 'Fredoka One', cursive; font-size: 18px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.lesson-title { font-size: 16px; font-weight: 800; color: var(--ink); flex: 1; }
+.lesson-xp {
+  font-size: 11px; font-weight: 800; color: var(--xp-bar);
+  background: #ede9fe; padding: 3px 9px; border-radius: 12px;
+}
+.expand-arrow { color: var(--ink3); font-size: 18px; transition: transform 0.2s; }
+.expand-arrow.open { transform: rotate(180deg); }
+
+.lesson-body { display: none; padding: 20px 20px 16px; }
+.lesson-body.open { display: block; }
+
+/* ── SPEECH BUBBLE ── */
+.bubble {
+  background: #f0f9ff; border: 2px solid #bae6fd;
+  border-radius: 16px; border-top-left-radius: 4px;
+  padding: 14px 18px; margin-bottom: 16px;
+  position: relative;
+}
+.bubble::before {
+  content: '🧙'; position: absolute;
+  left: -36px; top: 0; font-size: 24px;
+}
+.bubble-wrap { padding-left: 8px; }
+.bubble p { font-size: 15px; color: var(--ink2); line-height: 1.7; font-weight: 600; }
+.bubble p strong { color: var(--lv-color); }
+
+/* ── STORY BOX ── */
+.story {
+  background: #fffbeb; border: 2px solid #fde68a;
+  border-radius: 12px; padding: 16px 18px; margin: 14px 0;
+}
+.story-label { font-size: 11px; font-weight: 800; color: #d97706; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+.story p { font-size: 14.5px; color: #78350f; line-height: 1.7; font-weight: 600; }
+.story p strong { color: #92400e; }
+
+/* ── FACT BOX ── */
+.fact-box {
+  background: #f0fdf4; border: 2px solid #86efac;
+  border-radius: 12px; padding: 14px 16px; margin: 12px 0;
+  display: flex; gap: 12px; align-items: flex-start;
+}
+.fact-icon { font-size: 24px; flex-shrink: 0; }
+.fact-text { font-size: 14.5px; color: #166534; font-weight: 700; line-height: 1.6; }
+.fact-text strong { color: #14532d; }
+
+/* ── TRY IT ── */
+.try-it {
+  background: #fdf4ff; border: 2px dashed #d8b4fe;
+  border-radius: 12px; padding: 16px 18px; margin: 14px 0;
+}
+.try-label { font-size: 11px; font-weight: 800; color: #7c3aed; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+.try-it p, .try-it li { font-size: 14.5px; color: var(--ink2); font-weight: 600; line-height: 1.7; }
+.try-it ul { list-style: none; padding: 0; margin-top: 6px; }
+.try-it ul li { padding-left: 20px; position: relative; margin-bottom: 4px; }
+.try-it ul li::before { content: '★'; position: absolute; left: 0; color: var(--star); font-size: 12px; top: 3px; }
+
+/* ── MINI QUIZ inside lesson ── */
+.mini-q { margin: 14px 0; }
+.mini-q-text { font-size: 15px; font-weight: 800; color: var(--ink); margin-bottom: 10px; }
+.mini-options { display: flex; flex-direction: column; gap: 7px; }
+.mini-opt {
+  background: var(--sky); border: 2px solid var(--rule);
+  border-radius: 10px; padding: 10px 14px; cursor: pointer;
+  font-size: 14px; font-weight: 700; color: var(--ink2);
+  display: flex; align-items: center; gap: 10px;
+  transition: all 0.15s;
+}
+.mini-opt:hover { border-color: var(--lv-color); background: white; }
+.mini-opt.correct { background: #f0fdf4; border-color: #22c55e; color: #166534; }
+.mini-opt.wrong { background: #fff1f2; border-color: #f43f5e; color: #9f1239; }
+.mini-opt .opt-emoji { font-size: 18px; }
+.mini-feedback { display: none; margin-top: 8px; padding: 10px 14px; border-radius: 8px; font-size: 14px; font-weight: 700; }
+.mini-feedback.correct { background: #dcfce7; color: #166534; display: block; }
+.mini-feedback.wrong { background: #ffe4e6; color: #9f1239; display: block; }
+
+/* ── LEVEL UP BUTTON ── */
+.level-up-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; padding: 14px;
+  background: linear-gradient(135deg, var(--lv-color), color-mix(in srgb, var(--lv-color) 70%, white));
+  color: white; border: none; border-radius: 12px;
+  font-family: 'Fredoka One', cursive; font-size: 20px;
+  cursor: pointer; margin-top: 20px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.level-up-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.2); }
+.level-up-btn:active { transform: translateY(0); }
+
+/* ── STARS ── */
+.stars { display: flex; gap: 4px; margin: 8px 0; }
+.star { font-size: 24px; filter: grayscale(1) opacity(0.3); transition: all 0.3s; }
+.star.lit { filter: none; animation: starPop 0.4s ease; }
+@keyframes starPop { 0%{transform:scale(0)} 60%{transform:scale(1.3)} 100%{transform:scale(1)} }
+
+/* ── COMPLETE BADGE ── */
+.complete-badge {
+  display: none; align-items: center; gap: 8px;
+  background: #ecfdf5; border: 2px solid #22c55e;
+  border-radius: 10px; padding: 8px 14px;
+  font-size: 13px; font-weight: 800; color: #15803d;
+  margin-top: 8px;
+}
+.complete-badge.show { display: flex; }
+
+/* ══════════════════════════
+   ALLOWANCE TRACKER (Level 5)
+══════════════════════════ */
+.tracker-card {
+  background: white; border-radius: 20px;
+  padding: 24px; margin-bottom: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  border: 3px solid var(--lv5);
+}
+.tracker-title {
+  font-family: 'Fredoka One', cursive; font-size: 22px;
+  color: var(--lv5); margin-bottom: 4px;
+}
+.tracker-sub { font-size: 13px; font-weight: 700; color: var(--ink3); margin-bottom: 20px; }
+
+.money-display {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 12px; margin-bottom: 20px;
+}
+.money-cell {
+  background: var(--sky); border-radius: 12px; padding: 14px;
+  text-align: center;
+}
+.money-cell-label { font-size: 11px; font-weight: 800; color: var(--ink3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+.money-cell-value {
+  font-family: 'Fredoka One', cursive; font-size: 30px;
+  color: var(--ink); line-height: 1;
+}
+.money-cell-value.green { color: #10b981; }
+.money-cell-value.purple { color: var(--lv5); }
+
+.week-grid {
+  display: flex; gap: 8px; margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.week-btn {
+  flex: 1; min-width: 60px;
+  background: var(--sky); border: 2px solid var(--rule);
+  border-radius: 12px; padding: 10px 6px;
+  text-align: center; cursor: pointer;
+  font-family: 'Nunito', sans-serif; font-weight: 800;
+  transition: all 0.2s;
+}
+.week-btn:hover { border-color: var(--lv5); background: #fdf4ff; }
+.week-btn.done { background: #f0fdf4; border-color: #22c55e; }
+.week-btn.active-week { background: #fdf4ff; border-color: var(--lv5); }
+.week-btn .wk-label { font-size: 10px; color: var(--ink3); text-transform: uppercase; letter-spacing: 0.06em; }
+.week-btn .wk-kept { font-size: 18px; color: var(--ink); font-family: 'Fredoka One', cursive; }
+.week-btn .wk-bonus { font-size: 11px; color: #10b981; font-weight: 800; }
+.week-btn.done .wk-label { color: #166534; }
+
+.spend-row {
+  display: flex; gap: 10px; align-items: center; margin-bottom: 12px;
+}
+.spend-input {
+  flex: 1; padding: 12px 14px; border: 2px solid var(--rule);
+  border-radius: 10px; font-family: 'Nunito', sans-serif;
+  font-size: 16px; font-weight: 700; color: var(--ink);
+  background: white;
+}
+.spend-input:focus { outline: none; border-color: var(--lv5); }
+.spend-btn {
+  padding: 12px 20px; background: var(--lv5); color: white;
+  border: none; border-radius: 10px;
+  font-family: 'Fredoka One', cursive; font-size: 16px;
+  cursor: pointer; transition: all 0.15s;
+}
+.spend-btn:hover { opacity: 0.85; }
+.spend-btn.end-week-btn { background: #10b981; }
+
+.spend-log { margin: 12px 0; }
+.spend-log-title { font-size: 12px; font-weight: 800; color: var(--ink3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+.spend-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 12px; background: var(--sky); border-radius: 8px;
+  margin-bottom: 4px; font-size: 14px; font-weight: 700;
+}
+.spend-item .spend-name { color: var(--ink2); }
+.spend-item .spend-amt { color: #ef4444; font-family: 'Fredoka One', cursive; }
+
+.bonus-reveal {
+  display: none; background: linear-gradient(135deg, #fdf4ff, #ede9fe);
+  border: 3px solid var(--lv5); border-radius: 16px;
+  padding: 20px; text-align: center; margin-top: 12px;
+}
+.bonus-reveal.show { display: block; }
+.bonus-emoji { font-size: 48px; animation: bounce 1s infinite; }
+.bonus-title { font-family: 'Fredoka One', cursive; font-size: 24px; color: var(--lv5); margin: 8px 0 4px; }
+.bonus-breakdown { font-size: 14px; color: var(--ink2); font-weight: 700; line-height: 1.8; }
+.bonus-total { font-family: 'Fredoka One', cursive; font-size: 36px; color: #10b981; margin-top: 8px; }
+
+.reset-btn {
+  width: 100%; padding: 10px; background: transparent;
+  border: 2px solid var(--rule); border-radius: 10px;
+  color: var(--ink3); font-family: 'Nunito', sans-serif;
+  font-size: 13px; font-weight: 800; cursor: pointer; margin-top: 12px;
+  transition: all 0.2s;
+}
+.reset-btn:hover { border-color: #ef4444; color: #ef4444; }
+
+/* ── BIG QUIZ (end of each level) ── */
+.big-quiz {
+  background: linear-gradient(135deg, #1e1b2e, #3b2d8a);
+  border-radius: 20px; padding: 24px;
+  margin-top: 24px; margin-bottom: 16px;
+}
+.bq-title {
+  font-family: 'Fredoka One', cursive; font-size: 24px;
+  color: #fbbf24; margin-bottom: 4px; text-align: center;
+}
+.bq-sub { font-size: 13px; color: #a5b4fc; font-weight: 700; text-align: center; margin-bottom: 20px; }
+
+.bq-block { margin-bottom: 20px; }
+.bq-text { font-size: 15px; font-weight: 800; color: white; margin-bottom: 10px; }
+.bq-num { color: var(--star); margin-right: 6px; }
+.bq-options { display: flex; flex-direction: column; gap: 7px; }
+.bq-opt {
+  background: rgba(255,255,255,0.08); border: 2px solid rgba(255,255,255,0.12);
+  border-radius: 10px; padding: 11px 14px; cursor: pointer;
+  font-size: 14px; font-weight: 700; color: #e0e7ff;
+  display: flex; align-items: center; gap: 10px;
+  transition: all 0.15s;
+}
+.bq-opt:hover { background: rgba(255,255,255,0.14); border-color: rgba(255,255,255,0.25); }
+.bq-opt.correct { background: rgba(34,197,94,0.2); border-color: #22c55e; color: #86efac; }
+.bq-opt.wrong { background: rgba(239,68,68,0.15); border-color: #ef4444; color: #fca5a5; }
+.bq-explain { display: none; margin-top: 8px; background: rgba(255,255,255,0.07); border-radius: 8px; padding: 10px 13px; font-size: 13px; color: #c4b5fd; font-weight: 700; line-height: 1.6; }
+.bq-explain.show { display: block; }
+
+.bq-result { display: none; text-align: center; margin-top: 16px; }
+.bq-result.show { display: block; }
+.bq-score { font-family: 'Fredoka One', cursive; font-size: 40px; color: #fbbf24; }
+.bq-msg { font-size: 16px; color: #a5b4fc; font-weight: 700; margin-top: 4px; }
+.bq-stars { display: flex; justify-content: center; gap: 6px; margin: 10px 0; }
+.bq-star { font-size: 32px; filter: grayscale(1) opacity(0.25); transition: all 0.4s; }
+.bq-star.lit { filter: none; }
+
+.bq-submit {
+  display: block; width: 100%; margin-top: 16px;
+  padding: 13px; background: var(--star); color: #1e1b2e;
+  border: none; border-radius: 12px;
+  font-family: 'Fredoka One', cursive; font-size: 20px;
+  cursor: pointer; transition: all 0.15s;
+}
+.bq-submit:hover { opacity: 0.9; transform: translateY(-1px); }
+
+/* ── CELEBRATION OVERLAY ── */
+.celebration {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 1000; align-items: center; justify-content: center;
+}
+.celebration.show { display: flex; }
+.cel-box {
+  background: linear-gradient(135deg, #1e1b2e, #4c1d95);
+  border: 3px solid #fbbf24; border-radius: 24px;
+  padding: 36px 32px; text-align: center; max-width: 340px;
+  animation: popIn 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+}
+@keyframes popIn { 0%{transform:scale(0.5) rotate(-5deg)} 100%{transform:scale(1) rotate(0)} }
+.cel-emoji { font-size: 64px; display: block; margin-bottom: 10px; }
+.cel-title { font-family: 'Fredoka One', cursive; font-size: 28px; color: #fbbf24; margin-bottom: 6px; }
+.cel-sub { font-size: 15px; color: #c4b5fd; font-weight: 700; line-height: 1.6; margin-bottom: 16px; }
+.cel-btn {
+  display: inline-block; padding: 12px 28px;
+  background: #fbbf24; color: #1e1b2e; border: none; border-radius: 12px;
+  font-family: 'Fredoka One', cursive; font-size: 18px; cursor: pointer;
+}
+
+/* responsive */
+@media (max-width: 480px) {
+  .hero-emoji { font-size: 48px; }
+  .hero-title { font-size: 26px; }
+  .money-display { grid-template-columns: 1fr 1fr; }
+  .money-cell-value { font-size: 24px; }
+  .bubble { margin-left: 32px; }
+  .bubble::before { left: -30px; }
+}
+</style>
+</head>
+<body>
+
+<!-- CELEBRATION OVERLAY -->
+<div class="celebration" id="celebration">
+  <div class="cel-box">
+    <span class="cel-emoji" id="cel-emoji">🏆</span>
+    <div class="cel-title" id="cel-title">Level Up!</div>
+    <div class="cel-sub" id="cel-sub">Amazing job! You earned a new badge!</div>
+    <button class="cel-btn" onclick="closeCelebration()">Keep Going! →</button>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div>
+    <div class="logo">🪙 Money Quest</div>
+    <div class="logo-sub">Financial Adventure for Kids</div>
+  </div>
+  <div class="xp-block">
+    <div class="xp-label">XP Progress</div>
+    <div class="xp-bar-wrap"><div class="xp-bar-fill" id="xpFill" style="width:0%"></div></div>
+    <div class="xp-text" id="xpText">0 / 500 XP</div>
+  </div>
+</div>
+
+<!-- LEVEL NAV -->
+<div class="level-nav">
+  <div class="lnav-item active" onclick="showLevel(1,this)" style="--lv-color:var(--lv1)">
+    <span class="lnav-icon">🪙</span>
+    <span class="lnav-label">Level 1</span>
+  </div>
+  <div class="lnav-item" onclick="showLevel(2,this)" style="--lv-color:var(--lv2)">
+    <span class="lnav-icon">🐷</span>
+    <span class="lnav-label">Level 2</span>
+  </div>
+  <div class="lnav-item" onclick="showLevel(3,this)" style="--lv-color:var(--lv3)">
+    <span class="lnav-icon">🛒</span>
+    <span class="lnav-label">Level 3</span>
+  </div>
+  <div class="lnav-item" onclick="showLevel(4,this)" style="--lv-color:var(--lv4)">
+    <span class="lnav-icon">🌱</span>
+    <span class="lnav-label">Level 4</span>
+  </div>
+  <div class="lnav-item" onclick="showLevel(5,this)" style="--lv-color:var(--lv5)">
+    <span class="lnav-icon">🎮</span>
+    <span class="lnav-label">My $$$</span>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════
+     LEVEL 1 — What is Money?
+═══════════════════════════ -->
+<div class="screen active" id="level1" style="--lv-color:var(--lv1)">
+  <div class="level-hero" style="background: linear-gradient(180deg,#fffbeb,var(--sky))">
+    <div class="hero-badge" style="background:var(--lv1)">🌟 Level 1 · The Basics</div>
+    <span class="hero-emoji">🪙</span>
+    <div class="hero-title">What Is Money?</div>
+    <div class="hero-sub">Learn what money is, where it comes from, and why everyone uses it!</div>
+  </div>
+
+  <div class="main">
+
+    <!-- LESSON 1 -->
+    <div class="lesson-card">
+      <div class="lesson-header" onclick="toggleLesson('l1_1')">
+        <div class="lesson-num" style="background:var(--lv1)">1</div>
+        <div class="lesson-title">Money is a Magic Tool 🪄</div>
+        <div class="lesson-xp">+50 XP</div>
+        <div class="expand-arrow" id="arr_l1_1">▾</div>
+      </div>
+      <div class="lesson-body" id="body_l1_1">
+        <div class="bubble-wrap">
+          <div class="bubble">
+            <p>Hey adventurer! 👋 Long ago, people didn't have money. If you wanted bread, you had to trade something — like a chicken! But what if the baker didn't want a chicken? That was a big problem. So people invented <strong>money</strong> — something everyone agrees has value!</p>
+          </div>
+        </div>
+
+        <div class="story">
+          <div class="story-label">📖 Story Time</div>
+          <p>Imagine you're Maya. You have <strong>10 apples</strong> from your tree. You want a soccer ball. You find Jake who has a soccer ball, but Jake doesn't want apples — he wants <strong>stickers</strong>. You'd have to find someone with stickers who wants apples, trade for stickers, then trade stickers for a ball. That's SO hard! Money fixes this problem. 🎉</p>
+        </div>
+
+        <div class="fact-box">
+          <div class="fact-icon">💡</div>
+          <div class="fact-text">Money is anything people <strong>agree</strong> has value. It's been shells, gold, paper, and now even digital numbers on a screen! The important thing is everyone agrees to use it.</div>
+        </div>
+
+        <div class="mini-q" id="mq_l1_1">
+          <div class="mini-q-text">⚡ Quick Check: Why did people invent money?</div>
+          <div class="mini-options">
+            <div class="mini-opt" onclick="miniAnswer('mq_l1_1','a','b')"><span class="opt-emoji">🎨</span> Because it's pretty to look at</div>
+            <div class="mini-opt" onclick="miniAnswer('mq_l1_1','b','b')"><span class="opt-emoji">🔄</span> To make trading things much easier</div>
+            <div class="mini-opt" onclick="miniAnswer('mq_l1_1','c','b')"><span class="opt-emoji">👑</span> Because kings said everyone had to use it</div>
+          </div>
+          <div class="mini-feedback" id="fb_mq_l1_1"></div>
+        </div>
+
+        <div class="complete-badge" id="done_l1_1">✅ Lesson Complete! +50 XP</div>
+      </div>
+    </div>
+
+    <!-- LESSON 2 -->
+    <div class="lesson-card">
+      <div class="lesson-header" onclick="toggleLesson('l1_2')">
+        <div class="lesson-num" style="background:var(--lv1)">2</div>
+        <div class="lesson-title">How Do You Get Money? 💼</div>
+        <div class="lesson-xp">+50 XP</div>
+        <div class="expand-arrow" id="arr_l1_2">▾</div>
+      </div>
+      <div class="lesson-body" id="body_l1_2">
+        <div class="bubble-wrap">
+          <div class="bubble">
+            <p>Money doesn't grow on trees (even though that would be AMAZING 🌳💸). You get money by <strong>doing something useful for others</strong>. When you mow a lawn, bake cookies to sell, or when your parents go to work — that's trading your time and skills for money!</p>
+          </div>
+        </div>
+
+        <div class="fact-box">
+          <div class="fact-icon">🏃</div>
+          <div class="fact-text"><strong>3 ways kids can earn money:</strong><br>1. Allowance from parents for doing chores 🧹<br>2. Selling things (lemonade, crafts, baked goods) 🍋<br>3. Helping neighbors (walking dogs, watering plants) 🐶</div>
+        </div>
+
+        <div class="story">
+          <div class="story-label">📖 Did You Know?</div>
+          <p>Your <strong>$5 allowance every week</strong> is your first taste of earning money! It's practice for when you're older and earn money from a job. The skills you learn now — saving, spending wisely, making it grow — are the SAME skills adults use! 🌟</p>
+        </div>
+
+        <div class="mini-q" id="mq_l1_2">
+          <div class="mini-q-text">⚡ Quick Check: Which of these is NOT a way to earn money?</div>
+          <div class="mini-options">
+            <div class="mini-opt" onclick="miniAnswer('mq_l1_2','a','a')"><span class="opt-emoji">🌙</span> Wishing really hard for it</div>
+            <div class="mini-opt" onclick="miniAnswer('mq_l1_2','b','a')"><span class="opt-emoji">🐕</span> Walking the neighbor's dog</div>
+            <div class="mini-opt" onclick="miniAnswer('mq_l1_2','c','a')"><span class="opt-emoji">🍋</span> Selling lemonade on a hot day</div>
+          </div>
+          <div class="mini-feedback" id="fb_mq_l1_2"></div>
+        </div>
+        <div class="complete-badge" id="done_l1_2">✅ Lesson Complete! +50 XP</div>
+      </div>
+    </div>
+
+    <!-- LESSON 3 -->
+    <div class="lesson-card">
+      <div class="lesson-header" onclick="toggleLesson('l1_3')">
+        <div class="lesson-num" style="background:var(--lv1)">3</div>
+        <div class="lesson-title">Needs vs. Wants 🍎🎮</div>
+        <div class="lesson-xp">+50 XP</div>
+        <div class="expand-arrow" id="arr_l1_3">▾</div>
+      </div>
+      <div class="lesson-body" id="body_l1_3">
+        <div class="bubble-wrap">
+          <div class="bubble">
+            <p>Here's a superpower that will help you forever: knowing the difference between what you <strong>NEED</strong> and what you <strong>WANT</strong>. Needs are things you must have to survive. Wants are things that would be fun or nice to have!</p>
+          </div>
+        </div>
+
+        <div class="fact-box">
+          <div class="fact-icon">🍎</div>
+          <div class="fact-text"><strong>NEEDS:</strong> Food, water, clothes, a home, going to school<br><strong>WANTS:</strong> Video games, candy, toys, movies, new sneakers (when your old ones still work!)</div>
+        </div>
+
+        <div class="story">
+          <div class="story-label">🤔 Think About It</div>
+          <p>Is a phone a need or a want? For a doctor on call — maybe a need! For an 8-year-old — probably a want. <strong>It depends on the situation!</strong> Smart money people always ask themselves: "Do I NEED this, or do I just WANT it?" before spending.</p>
+        </div>
+
+        <div class="try-it">
+          <div class="try-label">✨ Try It!</div>
+          <p>Sort these into NEEDS or WANTS. Think about each one!</p>
+          <ul>
+            <li>A new pair of shoes (when yours are worn out) → <strong>NEED</strong></li>
+            <li>A new video game → <strong>WANT</strong></li>
+            <li>Lunch at school → <strong>NEED</strong></li>
+            <li>Extra candy → <strong>WANT</strong></li>
+            <li>A warm winter coat → <strong>NEED</strong></li>
+          </ul>
+        </div>
+
+        <div class="mini-q" id="mq_l1_3">
+          <div class="mini-q-text">⚡ Quick Check: You have $5. You're hungry AND you want a new sticker pack. What should you buy FIRST?</div>
+          <div class="mini-options">
+            <div class="mini-opt" onclick="miniAnswer('mq_l1_3','a','a')"><span class="opt-emoji">⭐</span> The sticker pack — it's more fun!</div>
+            <div class="mini-opt" onclick="miniAnswer('mq_l1_3','b','a')"><span class="opt-emoji">🥪</span> Food — because hunger is a NEED</div>
+            <div class="mini-opt" onclick="miniAnswer('mq_l1_3','c','a')"><span class="opt-emoji">🤷</span> Flip a coin!</div>
+          </div>
+          <div class="mini-feedback" id="fb_mq_l1_3"></div>
+        </div>
+        <div class="complete-badge" id="done_l1_3">✅ Lesson Complete! +50 XP</div>
+      </div>
+    </div>
+
+    <!-- LEVEL 1 BIG QUIZ -->
+    <div class="big-quiz">
+      <div class="bq-title">🏆 Level 1 Boss Quiz!</div>
+      <div class="bq-sub">Answer all 3 questions to unlock Level 2!</div>
+
+      <div class="bq-block" id="bq1_1">
+        <div class="bq-text"><span class="bq-num">Q1.</span> What problem does money solve?</div>
+        <div class="bq-options">
+          <div class="bq-opt" onclick="bqAnswer('bq1_1','a','b')">😴 It helps people sleep better</div>
+          <div class="bq-opt" onclick="bqAnswer('bq1_1','b','b')">🔄 It makes trading easier — you don't need to find someone who wants exactly what you have</div>
+          <div class="bq-opt" onclick="bqAnswer('bq1_1','c','b')">🏃 It makes people run faster</div>
+        </div>
+        <div class="bq-explain" id="bqexp_bq1_1">✅ Right! Before money, people had to barter (trade directly). Money means you can sell to anyone and buy from anyone!</div>
+      </div>
+
+      <div class="bq-block" id="bq1_2">
+        <div class="bq-text"><span class="bq-num">Q2.</span> Which is a NEED?</div>
+        <div class="bq-options">
+          <div class="bq-opt" onclick="bqAnswer('bq1_2','a','a')">🥗 Healthy food to eat every day</div>
+          <div class="bq-opt" onclick="bqAnswer('bq1_2','b','a')">🎪 A trip to the amusement park</div>
+          <div class="bq-opt" onclick="bqAnswer('bq1_2','c','a')">🎧 New headphones</div>
+        </div>
+        <div class="bq-explain" id="bqexp_bq1_2">✅ Food is a need! You can't survive without it. Amusement parks and headphones are wants — fun, but not required.</div>
+      </div>
+
+      <div class="bq-block" id="bq1_3">
+        <div class="bq-text"><span class="bq-num">Q3.</span> Your friend says "I'll give you $5 if you help me clean my room." This is an example of…</div>
+        <div class="bq-options">
+          <div class="bq-opt" onclick="bqAnswer('bq1_3','a','b')">🤑 Stealing</div>
+          <div class="bq-opt" onclick="bqAnswer('bq1_3','b','b')">💼 Earning money by doing something useful for someone else</div>
+          <div class="bq-opt" onclick="bqAnswer('bq1_3','c','b')">🎁 Getting a gift</div>
+        </div>
+        <div class="bq-explain" id="bqexp_bq1_3">✅ Exactly! You're trading your time and effort (cleaning) for money ($5). That's how earning works!</div>
+      </div>
+
+      <button class="bq-submit" onclick="showBQResult(1, 3)">⚡ Check My Score!</button>
+      <div class="bq-result" id="bqresult_1">
+        <div class="bq-stars"><span class="bq-star" id="bqstar_1_1">⭐</span><span class="bq-star" id="bqstar_1_2">⭐</span><span class="bq-star" id="bqstar_1_3">⭐</span></div>
+        <div class="bq-score" id="bqscore_1"></div>
+        <div class="bq-msg" id="bqmsg_1"></div>
+      </div>
+    </div>
+
+    <button class="level-up-btn" style="--lv-color:var(--lv1)" onclick="levelUp(1)">
+      🚀 Complete Level 1 → Unlock Level 2!
+    </button>
+
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════
+     LEVEL 2 — Saving Money
+═══════════════════════════ -->
+<div class="screen" id="level2" style="--lv-color:var(--lv2)">
+  <div class="level-hero" style="background:linear-gradient(180deg,#f0fdf4,var(--sky))">
+    <div class="hero-badge" style="background:var(--lv2)">💚 Level 2 · Saving</div>
+    <span class="hero-emoji">🐷</span>
+    <div class="hero-title">The Magic of Saving!</div>
+    <div class="hero-sub">Why saving is like a superpower — and how waiting can make your money GROW!</div>
+  </div>
+
+  <div class="main">
+    <div class="lesson-card">
+      <div class="lesson-header" onclick="toggleLesson('l2_1')">
+        <div class="lesson-num" style="background:var(--lv2)">1</div>
+        <div class="lesson-title">What Happens When You Save? 🐷</div>
+        <div class="lesson-xp">+50 XP</div>
+        <div class="expand-arrow" id="arr_l2_1">▾</div>
+      </div>
+      <div class="lesson-body" id="body_l2_1">
+        <div class="bubble-wrap">
+          <div class="bubble">
+            <p>Saving means <strong>keeping some money instead of spending all of it</strong>. When you save, you're giving your future self a gift! The money just sits there, waiting for something important or something you really want.</p>
+          </div>
+        </div>
+        <div class="story">
+          <div class="story-label">📖 The Marshmallow Test</div>
+          <p>Scientists gave kids a marshmallow and said: "You can eat this now, or wait 15 minutes and get TWO marshmallows." Kids who could wait ended up doing better in life! This is called <strong>delayed gratification</strong> — waiting for a bigger reward. Saving money is the same idea! 🍡🍡</p>
+        </div>
+        <div class="fact-box">
+          <div class="fact-icon">🎯</div>
+          <div class="fact-text">Try the <strong>3-Jar System!</strong><br>🫙 Jar 1: <strong>SPEND</strong> — for things you want now<br>🫙 Jar 2: <strong>SAVE</strong> — for a bigger goal<br>🫙 Jar 3: <strong>GIVE</strong> — to help others or charity</div>
+        </div>
+        <div class="mini-q" id="mq_l2_1">
+          <div class="mini-q-text">⚡ You get $5. You spend $3 on snacks. How much is left to save?</div>
+          <div class="mini-options">
+            <div class="mini-opt" onclick="miniAnswer('mq_l2_1','a','b')"><span class="opt-emoji">💰</span> $1</div>
+            <div class="mini-opt" onclick="miniAnswer('mq_l2_1','b','b')"><span class="opt-emoji">💰</span> $2</div>
+            <div class="mini-opt" onclick="miniAnswer('mq_l2_1','c','b')"><span class="opt-emoji">💰</span> $5</div>
+          </div>
+          <div class="mini-feedback" id="fb_mq_l2_1"></div>
+        </div>
+        <div class="complete-badge" id="done_l2_1">✅ Lesson Complete! +50 XP</div>
+      </div>
+    </div>
+
+    <div class="lesson-card">
+      <div class="lesson-header" onclick="toggleLesson('l2_2')">
+        <div class="lesson-num" style="background:var(--lv2)">2</div>
+        <div class="lesson-title">Interest — Money Making Money! 🌱</div>
+        <div class="lesson-xp">+50 XP</div>
+        <div class="expand-arrow" id="arr_l2_2">▾</div>
+      </div>
+      <div class="lesson-body" id="body_l2_2">
+        <div class="bubble-wrap">
+          <div class="bubble">
+            <p>Here's something MAGICAL: when you put money in a bank, the bank actually <strong>pays you</strong> for keeping it there! It's called <strong>interest</strong>. The longer you leave it, the more you earn. Your money starts making baby money! 👶💰</p>
+          </div>
+        </div>
+        <div class="story">
+          <div class="story-label">🧮 Watch Money Grow!</div>
+          <p>If you save <strong>$100</strong> in a bank that gives 5% interest per year:<br>
+          After Year 1: $100 + $5 = <strong>$105</strong><br>
+          After Year 2: $105 + $5.25 = <strong>$110.25</strong><br>
+          After Year 3: $110.25 + $5.51 = <strong>$115.76</strong><br>
+          You didn't do ANYTHING — the money grew by itself! This is called <strong>compound interest</strong> — interest on top of interest! 🤯</p>
+        </div>
+        <div class="fact-box">
+          <div class="fact-icon">🌳</div>
+          <div class="fact-text">Albert Einstein called compound interest <strong>"the eighth wonder of the world."</strong> The earlier you start saving, the more powerful it gets!</div>
+        </div>
+        <div class="mini-q" id="mq_l2_2">
+          <div class="mini-q-text">⚡ You save $50. The bank gives you 10% interest. After 1 year, you have…</div>
+          <div class="mini-options">
+            <div class="mini-opt" onclick="miniAnswer('mq_l2_2','a','c')"><span class="opt-emoji">💵</span> $50 (nothing changed)</div>
+            <div class="mini-opt" onclick="miniAnswer('mq_l2_2','b','c')"><span class="opt-emoji">💵</span> $45 (it went down?!)</div>
+            <div class="mini-opt" onclick="miniAnswer('mq_l2_2','c','c')"><span class="opt-emoji">💵</span> $55 ($50 + $5 interest)</div>
+          </div>
+          <div class="mini-feedback" id="fb_mq_l2_2"></div>
+        </div>
+        <div class="complete-badge" id="done_l2_2">✅ Lesson Complete! +50 XP</div>
+      </div>
+    </div>
+
+    <div class="lesson-card">
+      <div class="lesson-header" onclick="toggleLesson('l2_3')">
+        <div class="lesson-num" style="background:var(--lv2)">3</div>
+        <div class="lesson-title">Setting Saving Goals 🎯</div>
+        <div class="lesson-xp">+50 XP</div>
+        <div class="expand-arrow" id="arr_l2_3">▾</div>
+      </div>
+      <div class="lesson-body" id="body_l2_3">
+        <div class="bubble-wrap">
+          <div class="bubble">
+            <p>Saving is MUCH easier when you have a <strong>goal</strong>! Instead of saving "just because," imagine what you're saving FOR. A new game? A special trip? Something you really want? That goal becomes your motivation superpower! 💪</p>
+          </div>
+        </div>
+        <div class="try-it">
+          <div class="try-label">✨ Make Your Saving Goal!</div>
+          <p>Answer these questions to set your first saving goal:</p>
+          <ul>
+            <li>What do you want to save for?</li>
+            <li>How much does it cost?</li>
+            <li>How much can you save each week from your $5?</li>
+            <li>How many weeks will it take?</li>
+          </ul>
+        </div>
+        <div class="story">
+          <div class="story-label">🧮 Example</div>
+          <p>You want a book that costs <strong>$12</strong>. You get $5 a week and decide to save $2 each week. <strong>$12 ÷ $2 = 6 weeks!</strong> In 6 weeks you can buy that book and still have $3 leftover each week for spending!</p>
+        </div>
+        <div class="mini-q" id="mq_l2_3">
+          <div class="mini-q-text">⚡ A toy costs $20. You save $4 a week. How many weeks to buy it?</div>
+          <div class="mini-options">
+            <div class="mini-opt" onclick="miniAnswer('mq_l2_3','a','b')"><span class="opt-emoji">📅</span> 4 weeks</div>
+            <div class="mini-opt" onclick="miniAnswer('mq_l2_3','b','b')"><span class="opt-emoji">📅</span> 5 weeks</div>
+            <div class="mini-opt" onclick="miniAnswer('mq_l2_3','c','b')"><span class="opt-emoji">📅</span> 10 weeks</div>
+          </div>
+          <div class="mini-feedback" id="fb_mq_l2_3"></div>
+        </div>
+        <div class="complete-badge" id="done_l2_3">✅ Lesson Complete! +50 XP</div>
+      </div>
+    </div>
+
+    <div class="big-quiz">
+      <div class="bq-title">🏆 Level 2 Boss Quiz!</div>
+      <div class="bq-sub">Prove your saving skills!</div>
+      <div class="bq-block" id="bq2_1">
+        <div class="bq-text"><span class="bq-num">Q1.</span> What is "interest" at a bank?</div>
+        <div class="bq-options">
+          <div class="bq-opt" onclick="bqAnswer('bq2_1','a','b')">😒 A fee the bank charges you for having an account</div>
+          <div class="bq-opt" onclick="bqAnswer('bq2_1','b','b')">🌱 Extra money the bank pays you for keeping your money there</div>
+          <div class="bq-opt" onclick="bqAnswer('bq2_1','c','b')">🎁 A birthday present from the bank</div>
+        </div>
+        <div class="bq-explain" id="bqexp_bq2_1">✅ Yes! The bank uses your money to make loans to others, so they share some of that profit with you as "interest."</div>
+      </div>
+      <div class="bq-block" id="bq2_2">
+        <div class="bq-text"><span class="bq-num">Q2.</span> Why is saving easier when you have a goal?</div>
+        <div class="bq-options">
+          <div class="bq-opt" onclick="bqAnswer('bq2_2','a','b')">😴 It isn't — saving is always boring</div>
+          <div class="bq-opt" onclick="bqAnswer('bq2_2','b','b')">🎯 Because you have something exciting to work toward — motivation!</div>
+          <div class="bq-opt" onclick="bqAnswer('bq2_2','c','b')">💸 Because goals make money appear faster</div>
+        </div>
+        <div class="bq-explain" id="bqexp_bq2_2">✅ Goals give you a reason to say no to small spending now, so you can get something bigger later!</div>
+      </div>
+      <div class="bq-block" id="bq2_3">
+        <div class="bq-text"><span class="bq-num">Q3.</span> You save $10. It earns interest and grows to $11. Then the $11 earns interest. This is called…</div>
+        <div class="bq-options">
+          <div class="bq-opt" onclick="bqAnswer('bq2_3','a','c')">🎲 Lucky money</div>
+          <div class="bq-opt" onclick="bqAnswer('bq2_3','b','c')">🏦 Spending interest</div>
+          <div class="bq-opt" onclick="bqAnswer('bq2_3','c','c')">🌳 Compound interest — interest earning interest!</div>
+        </div>
+        <div class="bq-explain" id="bqexp_bq2_3">✅ Compound interest is the most powerful idea in money! The longer you wait, the faster it grows.</div>
+      </div>
+      <button class="bq-submit" onclick="showBQResult(2, 3)">⚡ Check My Score!</button>
+      <div class="bq-result" id="bqresult_2">
+        <div class="bq-stars"><span class="bq-star" id="bqstar_2_1">⭐</span><span class="bq-star" id="bqstar_2_2">⭐</span><span class="bq-star" id="bqstar_2_3">⭐</span></div>
+        <div class="bq-score" id="bqscore_2"></div>
+        <div class="bq-msg" id="bqmsg_2"></div>
+      </div>
+    </div>
+    <button class="level-up-btn" style="--lv-color:var(--lv2)" onclick="levelUp(2)">🚀 Complete Level 2 → Unlock Level 3!</button>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════
+     LEVEL 3 — Spending Smart
+═══════════════════════════ -->
+<div class="screen" id="level3" style="--lv-color:var(--lv3)">
+  <div class="level-hero" style="background:linear-gradient(180deg,#eef2ff,var(--sky))">
+    <div class="hero-badge" style="background:var(--lv3)">💙 Level 3 · Smart Spending</div>
+    <span class="hero-emoji">🛒</span>
+    <div class="hero-title">Spend Like a Pro!</div>
+    <div class="hero-sub">Learn how to make great choices when you spend your money!</div>
+  </div>
+
+  <div class="main">
+    <div class="lesson-card">
+      <div class="lesson-header" onclick="toggleLesson('l3_1')">
+        <div class="lesson-num" style="background:var(--lv3)">1</div>
+        <div class="lesson-title">The "Wait 24 Hours" Rule ⏰</div>
+        <div class="lesson-xp">+50 XP</div>
+        <div class="expand-arrow" id="arr_l3_1">▾</div>
+      </div>
+      <div class="lesson-body" id="body_l3_1">
+        <div class="bubble-wrap">
+          <div class="bubble">
+            <p>Have you ever REALLY wanted something at the store, but then forgot about it a day later? That's <strong>impulse buying</strong> — spending because you feel excited in the moment. The fix? Wait <strong>24 hours</strong>. If you still want it the next day, it might be worth buying. Usually… you forget about it! 😄</p>
+          </div>
+        </div>
+        <div class="fact-box">
+          <div class="fact-icon">🧠</div>
+          <div class="fact-text">When you see something you want, your brain releases a chemical called <strong>dopamine</strong> that makes you feel excited. That's why shopping can feel so good! But that feeling fades fast — so always sleep on it first.</div>
+        </div>
+        <div class="mini-q" id="mq_l3_1">
+          <div class="mini-q-text">⚡ You see a cool toy at the store. What's the smartest thing to do?</div>
+          <div class="mini-options">
+            <div class="mini-opt" onclick="miniAnswer('mq_l3_1','a','b')"><span class="opt-emoji">🛒</span> Buy it immediately before they run out!</div>
+            <div class="mini-opt" onclick="miniAnswer('mq_l3_1','b','b')"><span class="opt-emoji">⏰</span> Wait 24 hours. If I still really want it tomorrow, then decide.</div>
+            <div class="mini-opt" onclick="miniAnswer('mq_l3_1','c','b')"><span class="opt-emoji">😤</span> Ask your parents to buy it for you</div>
+          </div>
+          <div class="mini-feedback" id="fb_mq_l3_1"></div>
+        </div>
+        <div class="complete-badge" id="done_l3_1">✅ Lesson Complete! +50 XP</div>
+      </div>
+    </div>
+
+    <div class="lesson-card">
+      <div class="lesson-header" onclick="toggleLesson('l3_2')">
+        <div class="lesson-num" style="background:var(--lv3)">2</div>
+        <div class="lesson-title">Comparing Prices 🔍</div>
+        <div class="lesson-xp">+50 XP</div>
+        <div class="expand-arrow" id="arr_l3_2">▾</div>
+      </div>
+      <div class="lesson-body" id="body_l3_2">
+        <div class="bubble-wrap">
+          <div class="bubble">
+            <p>Smart shoppers never just buy the first thing they see. They look around and <strong>compare prices</strong>! The same toy might cost $15 at one store and $10 at another. That's $5 saved — which is your whole weekly allowance!</p>
+          </div>
+        </div>
+        <div class="try-it">
+          <div class="try-label">✨ Price Detective Challenge</div>
+          <p>Next time you want to buy something, be a detective:</p>
+          <ul>
+            <li>Check the price at 2 or 3 different places</li>
+            <li>Look for sales or coupons</li>
+            <li>Ask "Is there a cheaper version that does the same thing?"</li>
+            <li>Ask your parents to help you search online too!</li>
+          </ul>
+        </div>
+        <div class="mini-q" id="mq_l3_2">
+          <div class="mini-q-text">⚡ The same book costs $8 at Store A and $6 at Store B. How much do you save by going to Store B?</div>
+          <div class="mini-options">
+            <div class="mini-opt" onclick="miniAnswer('mq_l3_2','a','b')"><span class="opt-emoji">💰</span> $1</div>
+            <div class="mini-opt" onclick="miniAnswer('mq_l3_2','b','b')"><span class="opt-emoji">💰</span> $2</div>
+            <div class="mini-opt" onclick="miniAnswer('mq_l3_2','c','b')"><span class="opt-emoji">💰</span> $14</div>
+          </div>
+          <div class="mini-feedback" id="fb_mq_l3_2"></div>
+        </div>
+        <div class="complete-badge" id="done_l3_2">✅ Lesson Complete! +50 XP</div>
+      </div>
+    </div>
+
+    <div class="lesson-card">
+      <div class="lesson-header" onclick="toggleLesson('l3_3')">
+        <div class="lesson-num" style="background:var(--lv3)">3</div>
+        <div class="lesson-title">Making a Budget 📊</div>
+        <div class="lesson-xp">+50 XP</div>
+        <div class="expand-arrow" id="arr_l3_3">▾</div>
+      </div>
+      <div class="lesson-body" id="body_l3_3">
+        <div class="bubble-wrap">
+          <div class="bubble">
+            <p>A <strong>budget</strong> is just a plan for your money — deciding BEFORE you spend how much goes where. It sounds boring but it's actually a superpower! With a budget, you're the BOSS of your money, instead of your money disappearing and you wondering where it went! 🎮</p>
+          </div>
+        </div>
+        <div class="story">
+          <div class="story-label">📋 A Simple Budget for $5/week</div>
+          <p>
+          🫙 <strong>Save: $2</strong> — for your savings goal<br>
+          🎉 <strong>Spend: $2</strong> — for fun things you want<br>
+          ❤️ <strong>Give: $1</strong> — to help others<br>
+          <br>
+          This is called the <strong>50-40-10 rule</strong> (spend-save-give). You can adjust the numbers — the important thing is having a plan!</p>
+        </div>
+        <div class="mini-q" id="mq_l3_3">
+          <div class="mini-q-text">⚡ What is a budget?</div>
+          <div class="mini-options">
+            <div class="mini-opt" onclick="miniAnswer('mq_l3_3','a','c')"><span class="opt-emoji">😴</span> A boring rule adults made up</div>
+            <div class="mini-opt" onclick="miniAnswer('mq_l3_3','b','c')"><span class="opt-emoji">🎲</span> A way to make money appear out of nowhere</div>
+            <div class="mini-opt" onclick="miniAnswer('mq_l3_3','c','c')"><span class="opt-emoji">📋</span> A plan that tells your money where to go before you spend it</div>
+          </div>
+          <div class="mini-feedback" id="fb_mq_l3_3"></div>
+        </div>
+        <div class="complete-badge" id="done_l3_3">✅ Lesson Complete! +50 XP</div>
+      </div>
+    </div>
+
+    <div class="big-quiz">
+      <div class="bq-title">🏆 Level 3 Boss Quiz!</div>
+      <div class="bq-sub">Show off your smart spending skills!</div>
+      <div class="bq-block" id="bq3_1">
+        <div class="bq-text"><span class="bq-num">Q1.</span> What is impulse buying?</div>
+        <div class="bq-options">
+          <div class="bq-opt" onclick="bqAnswer('bq3_1','a','b')">🤔 Carefully thinking through a purchase for a week</div>
+          <div class="bq-opt" onclick="bqAnswer('bq3_1','b','b')">⚡ Buying something in the moment because you feel excited, without thinking it through</div>
+          <div class="bq-opt" onclick="bqAnswer('bq3_1','c','b')">🛒 Buying exactly what's on your shopping list</div>
+        </div>
+        <div class="bq-explain" id="bqexp_bq3_1">✅ Impulse buying is when the excitement of the moment makes you spend. The "wait 24 hours" rule helps fight it!</div>
+      </div>
+      <div class="bq-block" id="bq3_2">
+        <div class="bq-text"><span class="bq-num">Q2.</span> You have $10 and want to buy a poster. Store A sells it for $10, Store B for $7. What's the smart move?</div>
+        <div class="bq-options">
+          <div class="bq-opt" onclick="bqAnswer('bq3_2','a','b')">🏃 Buy it at Store A since you're already there</div>
+          <div class="bq-opt" onclick="bqAnswer('bq3_2','b','b')">🔍 Go to Store B — save $3! That's money to keep or use for something else</div>
+          <div class="bq-opt" onclick="bqAnswer('bq3_2','c','b')">🤷 Both stores are the same</div>
+        </div>
+        <div class="bq-explain" id="bqexp_bq3_2">✅ $3 saved is $3 you can put toward your savings goal or spend on something else. Always compare!</div>
+      </div>
+      <div class="bq-block" id="bq3_3">
+        <div class="bq-text"><span class="bq-num">Q3.</span> In a budget, who is the boss of the money?</div>
+        <div class="bq-options">
+          <div class="bq-opt" onclick="bqAnswer('bq3_3','a','c')">😅 The store</div>
+          <div class="bq-opt" onclick="bqAnswer('bq3_3','b','c')">🎯 Your feelings in the moment</div>
+          <div class="bq-opt" onclick="bqAnswer('bq3_3','c','c')">👑 YOU — because you decided the plan first!</div>
+        </div>
+        <div class="bq-explain" id="bqexp_bq3_3">✅ A budget makes YOU the boss! Without a plan, money just disappears. With a plan, you're in control.</div>
+      </div>
+      <button class="bq-submit" onclick="showBQResult(3, 3)">⚡ Check My Score!</button>
+      <div class="bq-result" id="bqresult_3">
+        <div class="bq-stars"><span class="bq-star" id="bqstar_3_1">⭐</span><span class="bq-star" id="bqstar_3_2">⭐</span><span class="bq-star" id="bqstar_3_3">⭐</span></div>
+        <div class="bq-score" id="bqscore_3"></div>
+        <div class="bq-msg" id="bqmsg_3"></div>
+      </div>
+    </div>
+    <button class="level-up-btn" style="--lv-color:var(--lv3)" onclick="levelUp(3)">🚀 Complete Level 3 → Unlock Level 4!</button>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════
+     LEVEL 4 — Investing
+═══════════════════════════ -->
+<div class="screen" id="level4" style="--lv-color:var(--lv4)">
+  <div class="level-hero" style="background:linear-gradient(180deg,#fdf2f8,var(--sky))">
+    <div class="hero-badge" style="background:var(--lv4)">🌸 Level 4 · Investing</div>
+    <span class="hero-emoji">🌱</span>
+    <div class="hero-title">Make Your Money Grow!</div>
+    <div class="hero-sub">Discover how investing is like planting seeds — small starts lead to big trees!</div>
+  </div>
+
+  <div class="main">
+    <div class="lesson-card">
+      <div class="lesson-header" onclick="toggleLesson('l4_1')">
+        <div class="lesson-num" style="background:var(--lv4)">1</div>
+        <div class="lesson-title">What is Investing? 🌱</div>
+        <div class="lesson-xp">+50 XP</div>
+        <div class="expand-arrow" id="arr_l4_1">▾</div>
+      </div>
+      <div class="lesson-body" id="body_l4_1">
+        <div class="bubble-wrap">
+          <div class="bubble">
+            <p>Investing means putting your money to <strong>work</strong> so it can grow bigger over time. Instead of just sitting in your piggy bank doing nothing, your money goes out into the world and comes back with <strong>more money friends!</strong> 🤝💰</p>
+          </div>
+        </div>
+        <div class="story">
+          <div class="story-label">🌳 The Apple Tree Story</div>
+          <p>Imagine you have a choice: eat 1 apple <strong>today</strong>, OR plant the apple seed and wait 5 years to get a tree that gives you <strong>100 apples every year forever</strong>. Investing is like planting that seed. It takes patience, but the reward is SO much bigger!</p>
+        </div>
+        <div class="fact-box">
+          <div class="fact-icon">📈</div>
+          <div class="fact-text">If your parents or grandparents put <strong>$1,000</strong> in a good investment when you were born, and it grows 10% per year, by the time you're <strong>65 years old</strong> it would be worth more than <strong>$490,000!</strong> 🤯</div>
+        </div>
+        <div class="mini-q" id="mq_l4_1">
+          <div class="mini-q-text">⚡ Investing is like…</div>
+          <div class="mini-options">
+            <div class="mini-opt" onclick="miniAnswer('mq_l4_1','a','b')"><span class="opt-emoji">🏃</span> Spending money as fast as possible</div>
+            <div class="mini-opt" onclick="miniAnswer('mq_l4_1','b','b')"><span class="opt-emoji">🌱</span> Planting a seed that grows into a tree over time</div>
+            <div class="mini-opt" onclick="miniAnswer('mq_l4_1','c','b')"><span class="opt-emoji">🎁</span> Giving your money away as presents</div>
+          </div>
+          <div class="mini-feedback" id="fb_mq_l4_1"></div>
+        </div>
+        <div class="complete-badge" id="done_l4_1">✅ Lesson Complete! +50 XP</div>
+      </div>
+    </div>
+
+    <div class="lesson-card">
+      <div class="lesson-header" onclick="toggleLesson('l4_2')">
+        <div class="lesson-num" style="background:var(--lv4)">2</div>
+        <div class="lesson-title">Stocks — Owning a Tiny Piece of a Company 🏢</div>
+        <div class="lesson-xp">+50 XP</div>
+        <div class="expand-arrow" id="arr_l4_2">▾</div>
+      </div>
+      <div class="lesson-body" id="body_l4_2">
+        <div class="bubble-wrap">
+          <div class="bubble">
+            <p>A <strong>stock</strong> is like owning a tiny slice of a pizza that is a company. If the pizza shop does really well and gets bigger, your slice is worth more! Big companies like Apple, Disney, and Nike are "sliced up" into millions of pieces called stocks that anyone can buy.</p>
+          </div>
+        </div>
+        <div class="story">
+          <div class="story-label">🍕 Pizza Shop Example</div>
+          <p>Your neighborhood opens a pizza shop worth $1,000. They split it into <strong>100 pieces (stocks)</strong> at $10 each. You buy 1 piece for $10. The pizza shop gets super popular and is now worth $2,000. Your 1 piece is now worth <strong>$20!</strong> You doubled your money just by being an owner! 🎉</p>
+        </div>
+        <div class="fact-box">
+          <div class="fact-icon">⚠️</div>
+          <div class="fact-text">Stocks can also go <strong>down</strong> in value! If the pizza shop has problems, your $10 might become $5. That's the risk. That's why we don't put ALL our money in one place — we <strong>spread it around!</strong></div>
+        </div>
+        <div class="mini-q" id="mq_l4_2">
+          <div class="mini-q-text">⚡ You own 1 stock worth $10 in a lemonade company. The company becomes famous and the stock is now worth $30. How much did you make?</div>
+          <div class="mini-options">
+            <div class="mini-opt" onclick="miniAnswer('mq_l4_2','a','b')"><span class="opt-emoji">💰</span> $10</div>
+            <div class="mini-opt" onclick="miniAnswer('mq_l4_2','b','b')"><span class="opt-emoji">💰</span> $20 profit (paid $10, now worth $30)</div>
+            <div class="mini-opt" onclick="miniAnswer('mq_l4_2','c','b')"><span class="opt-emoji">💰</span> $30</div>
+          </div>
+          <div class="mini-feedback" id="fb_mq_l4_2"></div>
+        </div>
+        <div class="complete-badge" id="done_l4_2">✅ Lesson Complete! +50 XP</div>
+      </div>
+    </div>
+
+    <div class="lesson-card">
+      <div class="lesson-header" onclick="toggleLesson('l4_3')">
+        <div class="lesson-num" style="background:var(--lv4)">3</div>
+        <div class="lesson-title">Don't Put All Eggs in One Basket 🥚🧺</div>
+        <div class="lesson-xp">+50 XP</div>
+        <div class="expand-arrow" id="arr_l4_3">▾</div>
+      </div>
+      <div class="lesson-body" id="body_l4_3">
+        <div class="bubble-wrap">
+          <div class="bubble">
+            <p>Smart investors <strong>spread their money</strong> across many different things. Why? If one thing goes wrong, you don't lose everything! This is called <strong>diversification</strong>. It's the "don't put all your eggs in one basket" rule of money. 🥚</p>
+          </div>
+        </div>
+        <div class="story">
+          <div class="story-label">📖 The Egg Story</div>
+          <p>You're carrying 12 eggs in ONE basket. You trip. <strong>All 12 eggs break!</strong> 😱<br>But if you carried 3 eggs in 4 different baskets, and you trip with one — only 3 eggs break. The other 9 are safe! <strong>That's diversification!</strong></p>
+        </div>
+        <div class="fact-box">
+          <div class="fact-icon">🎯</div>
+          <div class="fact-text">An <strong>ETF (like a basket of stocks)</strong> is a way to own tiny pieces of HUNDREDS of companies at once. If one company does poorly, the others help make up for it. It's like a pre-made diversified basket!</div>
+        </div>
+        <div class="mini-q" id="mq_l4_3">
+          <div class="mini-q-text">⚡ What does "diversification" mean for investing?</div>
+          <div class="mini-options">
+            <div class="mini-opt" onclick="miniAnswer('mq_l4_3','a','b')"><span class="opt-emoji">🎯</span> Putting ALL your money into the best one company</div>
+            <div class="mini-opt" onclick="miniAnswer('mq_l4_3','b','b')"><span class="opt-emoji">🧺</span> Spreading money across many different investments so one bad one doesn't ruin everything</div>
+            <div class="mini-opt" onclick="miniAnswer('mq_l4_3','c','b')"><span class="opt-emoji">💸</span> Spending money in many different stores</div>
+          </div>
+          <div class="mini-feedback" id="fb_mq_l4_3"></div>
+        </div>
+        <div class="complete-badge" id="done_l4_3">✅ Lesson Complete! +50 XP</div>
+      </div>
+    </div>
+
+    <div class="big-quiz">
+      <div class="bq-title">🏆 Level 4 Boss Quiz!</div>
+      <div class="bq-sub">Show what you know about investing!</div>
+      <div class="bq-block" id="bq4_1">
+        <div class="bq-text"><span class="bq-num">Q1.</span> Why is starting to invest early SO powerful?</div>
+        <div class="bq-options">
+          <div class="bq-opt" onclick="bqAnswer('bq4_1','a','b')">📅 Because investing rules say you have to start early</div>
+          <div class="bq-opt" onclick="bqAnswer('bq4_1','b','b')">🌱 Because compound interest (money making more money) has more TIME to work and grow huge!</div>
+          <div class="bq-opt" onclick="bqAnswer('bq4_1','c','b')">💸 Because stocks are cheaper when you're young</div>
+        </div>
+        <div class="bq-explain" id="bqexp_bq4_1">✅ Time is the secret ingredient! $1,000 invested at age 8 vs age 28 could end up being MANY times more at retirement — all because of compound interest having more years to work.</div>
+      </div>
+      <div class="bq-block" id="bq4_2">
+        <div class="bq-text"><span class="bq-num">Q2.</span> Buying a stock means…</div>
+        <div class="bq-options">
+          <div class="bq-opt" onclick="bqAnswer('bq4_2','a','c')">🎁 Lending money to a company</div>
+          <div class="bq-opt" onclick="bqAnswer('bq4_2','b','c')">🎪 Buying a product from a company</div>
+          <div class="bq-opt" onclick="bqAnswer('bq4_2','c','c')">🏢 Becoming a tiny owner of that company</div>
+        </div>
+        <div class="bq-explain" id="bqexp_bq4_2">✅ When you buy stock, you literally own a small piece of the company. If it grows, your piece grows too!</div>
+      </div>
+      <div class="bq-block" id="bq4_3">
+        <div class="bq-text"><span class="bq-num">Q3.</span> Why shouldn't you put ALL your money into just one stock?</div>
+        <div class="bq-options">
+          <div class="bq-opt" onclick="bqAnswer('bq4_3','a','b')">😤 Because the rules say so</div>
+          <div class="bq-opt" onclick="bqAnswer('bq4_3','b','b')">🥚 Because if that one company has problems, you could lose everything — spreading out (diversifying) protects you</div>
+          <div class="bq-opt" onclick="bqAnswer('bq4_3','c','b')">💰 Because one stock is never enough money</div>
+        </div>
+        <div class="bq-explain" id="bqexp_bq4_3">✅ Diversification is your safety net! Spread across many investments so a single bad one doesn't wipe you out.</div>
+      </div>
+      <button class="bq-submit" onclick="showBQResult(4, 3)">⚡ Check My Score!</button>
+      <div class="bq-result" id="bqresult_4">
+        <div class="bq-stars"><span class="bq-star" id="bqstar_4_1">⭐</span><span class="bq-star" id="bqstar_4_2">⭐</span><span class="bq-star" id="bqstar_4_3">⭐</span></div>
+        <div class="bq-score" id="bqscore_4"></div>
+        <div class="bq-msg" id="bqmsg_4"></div>
+      </div>
+    </div>
+    <button class="level-up-btn" style="--lv-color:var(--lv4)" onclick="levelUp(4)">🚀 Complete Level 4 → Unlock My Money Tracker!</button>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════
+     LEVEL 5 — Allowance Tracker
+═══════════════════════════ -->
+<div class="screen" id="level5" style="--lv-color:var(--lv5)">
+  <div class="level-hero" style="background:linear-gradient(180deg,#faf5ff,var(--sky))">
+    <div class="hero-badge" style="background:var(--lv5)">🎮 My Money Game</div>
+    <span class="hero-emoji">💜</span>
+    <div class="hero-title">My Allowance Tracker!</div>
+    <div class="hero-sub">Track your $5/week, see how much you save, and earn your bonus!</div>
+  </div>
+
+  <div class="main">
+
+    <!-- HOW IT WORKS -->
+    <div class="lesson-card">
+      <div class="lesson-header" onclick="toggleLesson('l5_how')">
+        <div class="lesson-num" style="background:var(--lv5)">?</div>
+        <div class="lesson-title">How Your Allowance Game Works 🎮</div>
+        <div class="lesson-xp">Read This!</div>
+        <div class="expand-arrow" id="arr_l5_how">▾</div>
+      </div>
+      <div class="lesson-body" id="body_l5_how">
+        <div class="bubble-wrap">
+          <div class="bubble">
+            <p>Here's how your special allowance works! 🌟</p>
+          </div>
+        </div>
+        <div class="fact-box">
+          <div class="fact-icon">💵</div>
+          <div class="fact-text"><strong>Every week:</strong> You get <strong>$5.00</strong> to start with!</div>
+        </div>
+        <div class="fact-box">
+          <div class="fact-icon">🛒</div>
+          <div class="fact-text"><strong>During the week:</strong> You can spend some. Whatever is LEFT at the end of the week gets matched!</div>
+        </div>
+        <div class="fact-box">
+          <div class="fact-icon">🎁</div>
+          <div class="fact-text"><strong>End of week bonus:</strong> Your parents will add <strong>DOUBLE</strong> what you kept — OR $5, whichever is MORE!<br><br>Example: You kept $3 → double = $6 → bonus = $6 (because $6 &gt; $5) ✨<br>Example: You kept $1 → double = $2 → bonus = $5 (because $5 &gt; $2) ✨</div>
+        </div>
+        <div class="fact-box">
+          <div class="fact-icon">📅</div>
+          <div class="fact-text"><strong>Every month:</strong> Everything resets and starts fresh for a new month!</div>
+        </div>
+        <div class="story">
+          <div class="story-label">💡 The Big Lesson</div>
+          <p>This game teaches you something REAL that rich people know: <strong>the more you save, the more your money multiplies!</strong> If you save ALL $5 each week, after 4 weeks you'd have $20 saved + $40 in bonuses = <strong>$60 total!</strong> That's the power of saving! 🚀</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRACKER -->
+    <div class="tracker-card">
+      <div class="tracker-title">💜 My Weekly Tracker</div>
+      <div class="tracker-sub">Click a week to track your spending and see your bonus!</div>
+
+      <div class="money-display">
+        <div class="money-cell">
+          <div class="money-cell-label">💵 This Week Started</div>
+          <div class="money-cell-value green" id="weekStart">$5.00</div>
+        </div>
+        <div class="money-cell">
+          <div class="money-cell-label">💰 Kept So Far</div>
+          <div class="money-cell-value purple" id="weekKept">$5.00</div>
+        </div>
+      </div>
+
+      <!-- Week selector -->
+      <div class="week-grid" id="weekGrid">
+        <div class="week-btn active-week" id="wbtn_1" onclick="selectWeek(1)">
+          <div class="wk-label">Week 1</div>
+          <div class="wk-kept" id="wkept_1">$5</div>
+          <div class="wk-bonus" id="wbonus_1"></div>
+        </div>
+        <div class="week-btn" id="wbtn_2" onclick="selectWeek(2)">
+          <div class="wk-label">Week 2</div>
+          <div class="wk-kept" id="wkept_2">—</div>
+          <div class="wk-bonus" id="wbonus_2"></div>
+        </div>
+        <div class="week-btn" id="wbtn_3" onclick="selectWeek(3)">
+          <div class="wk-label">Week 3</div>
+          <div class="wk-kept" id="wkept_3">—</div>
+          <div class="wk-bonus" id="wbonus_3"></div>
+        </div>
+        <div class="week-btn" id="wbtn_4" onclick="selectWeek(4)">
+          <div class="wk-label">Week 4</div>
+          <div class="wk-kept" id="wkept_4">—</div>
+          <div class="wk-bonus" id="wbonus_4"></div>
+        </div>
+      </div>
+
+      <!-- Spending input -->
+      <div class="spend-log-title">📝 What did you spend on? (enter $0 if nothing)</div>
+      <div id="spendLog"></div>
+
+      <div class="spend-row">
+        <input class="spend-input" type="number" id="spendAmt" placeholder="How much? (e.g. 1.50)" min="0" step="0.01">
+        <button class="spend-btn" onclick="addSpend()">Add Spend 💸</button>
+      </div>
+
+      <div class="spend-row">
+        <button class="spend-btn end-week-btn" style="width:100%;font-size:15px" onclick="endWeek()">✅ End This Week — Show My Bonus!</button>
+      </div>
+
+      <!-- Bonus reveal -->
+      <div class="bonus-reveal" id="bonusReveal">
+        <div class="bonus-emoji">🎉</div>
+        <div class="bonus-title">Bonus Time!</div>
+        <div class="bonus-breakdown" id="bonusBreakdown"></div>
+        <div class="bonus-total" id="bonusTotal"></div>
+      </div>
+
+      <!-- Monthly summary -->
+      <div id="monthlySummary" style="display:none; margin-top:16px; background:#f0fdf4; border:2px solid #22c55e; border-radius:12px; padding:16px; text-align:center;">
+        <div style="font-family:'Fredoka One',cursive; font-size:20px; color:#15803d; margin-bottom:6px;">🏆 Month Complete!</div>
+        <div style="font-size:14px; font-weight:700; color:#166534; line-height:1.8;" id="monthlyText"></div>
+      </div>
+
+      <button class="reset-btn" onclick="resetMonth()">🔄 Reset for New Month</button>
+    </div>
+
+  </div>
+</div>
+
+
+<script>
+// ── State ──
+const state = { xp: 0, completedLessons: {}, bqAnswers: {}, bqDone: {} };
+let trackerState = {
+  currentWeek: 1,
+  weeks: [
+    { spent: [], kept: 5, done: false, bonus: 0 },
+    { spent: [], kept: 5, done: false, bonus: 0 },
+    { spent: [], kept: 5, done: false, bonus: 0 },
+    { spent: [], kept: 5, done: false, bonus: 0 }
+  ]
+};
+
+// ── Navigation ──
+function showLevel(n, el) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.lnav-item').forEach(i => i.classList.remove('active'));
+  document.getElementById('level' + n).classList.add('active');
+  el.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  updateXPBar();
+}
+
+// ── Lessons ──
+function toggleLesson(id) {
+  const body = document.getElementById('body_' + id);
+  const arr = document.getElementById('arr_' + id);
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  if (arr) arr.classList.toggle('open', !isOpen);
+}
+
+// ── Mini Quiz ──
+const miniAnswers = {};
+function miniAnswer(qid, chosen, correct) {
+  if (miniAnswers[qid]) return;
+  miniAnswers[qid] = { chosen, correct };
+  const opts = document.querySelectorAll('#' + qid + ' .mini-opt');
+  opts.forEach((opt, i) => {
+    const label = ['a','b','c'][i];
+    if (label === correct) opt.classList.add('correct');
+    else if (label === chosen && chosen !== correct) opt.classList.add('wrong');
+  });
+  const fb = document.getElementById('fb_mq_' + qid);
+  if (fb) {
+    if (chosen === correct) {
+      fb.textContent = '🎉 Correct! Great job!';
+      fb.className = 'mini-feedback correct';
+      gainXP(qid, 10);
+      showLessonDone(qid);
+    } else {
+      fb.textContent = '❌ Not quite — look at the green answer above!';
+      fb.className = 'mini-feedback wrong';
+    }
+  }
+}
+
+function gainXP(id, amt) {
+  if (state.completedLessons[id]) return;
+  state.completedLessons[id] = true;
+  state.xp += amt;
+  updateXPBar();
+}
+
+function showLessonDone(qid) {
+  const parts = qid.split('_');
+  const lessonId = parts[0] + '_' + parts[1];
+  const badge = document.getElementById('done_' + lessonId);
+  if (badge) badge.classList.add('show');
+}
+
+function updateXPBar() {
+  const max = 500;
+  const pct = Math.min(100, Math.round((state.xp / max) * 100));
+  document.getElementById('xpFill').style.width = pct + '%';
+  document.getElementById('xpText').textContent = state.xp + ' / ' + max + ' XP';
+}
+
+// ── Boss Quiz ──
+const bqAnswers = {};
+function bqAnswer(qid, chosen, correct) {
+  if (bqAnswers[qid]) return;
+  bqAnswers[qid] = { chosen, correct };
+  const opts = document.querySelectorAll('#' + qid + ' .bq-opt');
+  opts.forEach((opt, i) => {
+    const label = ['a','b','c'][i];
+    if (label === correct) opt.classList.add('correct');
+    else if (label === chosen && chosen !== correct) opt.classList.add('wrong');
+  });
+  const exp = document.getElementById('bqexp_' + qid);
+  if (exp) exp.classList.add('show');
+}
+
+function showBQResult(level, total) {
+  let correct = 0;
+  for (let i = 1; i <= total; i++) {
+    const qid = 'bq' + level + '_' + i;
+    if (bqAnswers[qid] && bqAnswers[qid].chosen === bqAnswers[qid].correct) correct++;
+  }
+  const stars = ['bqstar_'+level+'_1','bqstar_'+level+'_2','bqstar_'+level+'_3'];
+  stars.slice(0, correct).forEach((sid, idx) => {
+    setTimeout(() => {
+      const el = document.getElementById(sid);
+      if (el) el.classList.add('lit');
+    }, idx * 300);
+  });
+  const msgs = ["Keep trying! Read the lessons again 💪", "Good try! You're almost there! 🌟", "So close! One more review! ⭐", "PERFECT! You're a money genius! 🏆"];
+  document.getElementById('bqscore_' + level).textContent = correct + ' / ' + total;
+  document.getElementById('bqmsg_' + level).textContent = msgs[correct];
+  document.getElementById('bqresult_' + level).classList.add('show');
+  state.xp += correct * 20;
+  updateXPBar();
+}
+
+function levelUp(level) {
+  const msgs = [
+    ['🎉', 'Level 2 Unlocked!', 'You know what money is! Now learn how to SAVE it like a champion! 🐷'],
+    ['🌟', 'Level 3 Unlocked!', 'Saving superstar! Time to learn how to spend smart! 🛒'],
+    ['🚀', 'Level 4 Unlocked!', 'Smart spender! Get ready to learn how to make your money GROW! 🌱'],
+    ['🏆', 'Tracker Unlocked!', 'Investing pro! Now track your real allowance and earn bonuses! 💜']
+  ];
+  const [emoji, title, sub] = msgs[level - 1];
+  document.getElementById('cel-emoji').textContent = emoji;
+  document.getElementById('cel-title').textContent = title;
+  document.getElementById('cel-sub').textContent = sub;
+  document.getElementById('celebration').classList.add('show');
+  state.xp += 50;
+  updateXPBar();
+}
+
+function closeCelebration() {
+  document.getElementById('celebration').classList.remove('show');
+}
+
+// ── Allowance Tracker ──
+function selectWeek(n) {
+  trackerState.currentWeek = n;
+  document.querySelectorAll('.week-btn').forEach((b, i) => {
+    b.classList.toggle('active-week', i + 1 === n);
+  });
+  renderTracker();
+}
+
+function renderTracker() {
+  const w = trackerState.weeks[trackerState.currentWeek - 1];
+  document.getElementById('weekStart').textContent = '$5.00';
+  document.getElementById('weekKept').textContent = '$' + w.kept.toFixed(2);
+
+  const log = document.getElementById('spendLog');
+  log.innerHTML = '';
+  if (w.spent.length > 0) {
+    const title = document.createElement('div');
+    title.className = 'spend-log-title';
+    title.textContent = 'Spent this week:';
+    log.appendChild(title);
+    w.spent.forEach(item => {
+      const row = document.createElement('div');
+      row.className = 'spend-item';
+      row.innerHTML = `<span class="spend-name">💸 Spent</span><span class="spend-amt">-$${item.toFixed(2)}</span>`;
+      log.appendChild(row);
+    });
+  }
+
+  for (let i = 1; i <= 4; i++) {
+    const wk = trackerState.weeks[i - 1];
+    document.getElementById('wkept_' + i).textContent = wk.done ? '$' + wk.kept.toFixed(2) : (wk.spent.length > 0 ? '$' + wk.kept.toFixed(2) : '—');
+    document.getElementById('wbonus_' + i).textContent = wk.done ? '+$' + wk.bonus.toFixed(2) + ' bonus!' : '';
+    document.getElementById('wbtn_' + i).classList.toggle('done', wk.done);
+  }
+}
+
+function addSpend() {
+  const input = document.getElementById('spendAmt');
+  const amt = parseFloat(input.value);
+  if (isNaN(amt) || amt < 0) return;
+  const w = trackerState.weeks[trackerState.currentWeek - 1];
+  if (w.done) return;
+  const newKept = Math.max(0, w.kept - amt);
+  w.kept = newKept;
+  if (amt > 0) w.spent.push(amt);
+  input.value = '';
+  renderTracker();
+}
+
+function endWeek() {
+  const w = trackerState.weeks[trackerState.currentWeek - 1];
+  if (w.done) return;
+  w.done = true;
+  const doubled = w.kept * 2;
+  const bonus = Math.max(doubled, 5);
+  w.bonus = bonus;
+
+  const reveal = document.getElementById('bonusReveal');
+  reveal.classList.add('show');
+  document.getElementById('bonusBreakdown').innerHTML =
+    `You kept: <strong>$${w.kept.toFixed(2)}</strong><br>` +
+    `Double that: <strong>$${doubled.toFixed(2)}</strong><br>` +
+    `Minimum bonus: <strong>$5.00</strong><br>` +
+    `Your bonus (the bigger one): `;
+  document.getElementById('bonusTotal').textContent = '+$' + bonus.toFixed(2) + ' 🎉';
+
+  renderTracker();
+
+  const allDone = trackerState.weeks.every(wk => wk.done);
+  if (allDone) showMonthlySummary();
+}
+
+function showMonthlySummary() {
+  const totalKept = trackerState.weeks.reduce((s, w) => s + w.kept, 0);
+  const totalBonus = trackerState.weeks.reduce((s, w) => s + w.bonus, 0);
+  const totalReceived = trackerState.weeks.length * 5;
+  const grand = totalKept + totalBonus;
+  document.getElementById('monthlySummary').style.display = 'block';
+  document.getElementById('monthlyText').innerHTML =
+    `Total allowance received: <strong>$${totalReceived.toFixed(2)}</strong><br>` +
+    `Total you kept (saved): <strong>$${totalKept.toFixed(2)}</strong><br>` +
+    `Total bonuses earned: <strong>$${totalBonus.toFixed(2)}</strong><br>` +
+    `🏆 Grand Total: <strong>$${grand.toFixed(2)}</strong>`;
+}
+
+function resetMonth() {
+  if (!confirm('Reset everything for a new month? 🔄')) return;
+  trackerState = {
+    currentWeek: 1,
+    weeks: [
+      { spent: [], kept: 5, done: false, bonus: 0 },
+      { spent: [], kept: 5, done: false, bonus: 0 },
+      { spent: [], kept: 5, done: false, bonus: 0 },
+      { spent: [], kept: 5, done: false, bonus: 0 }
+    ]
+  };
+  document.getElementById('bonusReveal').classList.remove('show');
+  document.getElementById('monthlySummary').style.display = 'none';
+  selectWeek(1);
+  renderTracker();
+}
+
+// init
+renderTracker();
+updateXPBar();
+</script>
+</body>
+</html>
